@@ -1,3 +1,9 @@
 name: RayAttributes
 version: '${project.version}'
 main: cn.earthsky.rayattributes.RayAttributes
+api-version: 1.12
+commands:
+  raya:
+    description: RayAttributes管理命令
+    usage: /raya <give|info|enhance|setlevel|reload>
+    permission: rayattributes.admin
