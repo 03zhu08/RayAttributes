@@ -1,0 +1,3 @@
+name: RayAttributes
+version: '${project.version}'
+main: cn.earthsky.rayattributes.RayAttributes
