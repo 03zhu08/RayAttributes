@@ -1,0 +1,38 @@
+sets:
+  BERSERKER:
+    name: "狂战士"
+    2-piece:
+      CRIT_RATE: 0.10
+    4-piece:
+      trigger: ON_CRIT
+      effects:
+        energy-restore: 5
+        attack-percent-buff:
+          value: 0.15
+          duration: 100
+  ARCANIST:
+    name: "奥术师"
+    2-piece:
+      SKILL_DAMAGE: 0.20
+    4-piece:
+      trigger: ON_SKILL_HIT
+      effects:
+        energy-refund-chance: 0.30
+        energy-refund-ratio: 0.50
+  GUARDIAN:
+    name: "守护者"
+    2-piece:
+      DEFENSE_PERCENT: 0.20
+    4-piece:
+      trigger: ON_DAMAGE_TAKEN
+      effects:
+        shield-ratio: 0.10
+        shield-cooldown: 200
+  SWIFT:
+    name: "迅捷"
+    2-piece:
+      COOLDOWN_REDUCTION: 0.15
+    4-piece:
+      trigger: ON_SKILL_USE
+      effects:
+        next-skill-cdr: 0.30

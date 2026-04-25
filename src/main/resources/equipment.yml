@@ -1,0 +1,56 @@
+tiers:
+  BLUE:
+    multiplier: 1.0
+  PURPLE:
+    multiplier: 1.5
+  GOLD:
+    multiplier: 2.2
+
+enhance:
+  max-level: 10
+  sub-stat-unlock:
+    3: 3
+    4: 5
+  sub-stat-enhance-levels: [6, 8, 10]
+  sub-stat-initial-ratio: 0.25
+  sub-stat-enhance-ratio: 0.25
+
+slots:
+  WEAPON:
+    main-stats: [ATTACK]
+    sub-stats: [ATTACK, ATTACK_PERCENT, CRIT_RATE, CRIT_DAMAGE, SKILL_DAMAGE, ENERGY_REGEN]
+  HEAD:
+    main-stats: [HEALTH]
+    sub-stats: [HEALTH, HEALTH_PERCENT, DEFENSE_PERCENT, CRIT_RATE, CRIT_DAMAGE]
+  CHEST:
+    main-stats: [ATTACK_PERCENT, HEALTH_PERCENT, DEFENSE_PERCENT, SKILL_DAMAGE]
+    sub-stats: [HEALTH, DEFENSE, CRIT_RATE, CRIT_DAMAGE, SKILL_DAMAGE]
+  LEGS:
+    main-stats: [HEALTH_PERCENT, DEFENSE_PERCENT]
+    sub-stats: [HEALTH, DEFENSE, DAMAGE_REDUCTION, ENERGY_REGEN]
+  FEET:
+    main-stats: [ENERGY_REGEN, COOLDOWN_REDUCTION]
+    sub-stats: [CRIT_RATE, CRIT_DAMAGE, ENERGY_REGEN]
+
+main-stat-max:
+  ATTACK: 120
+  ATTACK_PERCENT: 0.12
+  HEALTH: 300
+  HEALTH_PERCENT: 0.18
+  DEFENSE_PERCENT: 0.15
+  SKILL_DAMAGE: 0.15
+  ENERGY_REGEN: 0.12
+  COOLDOWN_REDUCTION: 0.10
+
+sub-stat-max:
+  ATTACK: 8
+  ATTACK_PERCENT: 0.03
+  HEALTH: 40
+  HEALTH_PERCENT: 0.04
+  DEFENSE: 10
+  DEFENSE_PERCENT: 0.035
+  CRIT_RATE: 0.03
+  CRIT_DAMAGE: 0.06
+  SKILL_DAMAGE: 0.05
+  ENERGY_REGEN: 0.04
+  DAMAGE_REDUCTION: 0.03

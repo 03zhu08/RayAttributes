@@ -1,0 +1,28 @@
+database:
+  host: localhost
+  port: 3306
+  database: ray_attributes
+  username: root
+  password: ""
+  pool-size: 10
+
+base-growth:
+  health:
+    base: 100
+    per-level: 20
+  attack:
+    base: 10
+    per-level: 5
+  defense:
+    base: 5
+    per-level: 3
+
+crit:
+  base-rate: 0.05
+  max-rate: 0.75
+  base-damage: 1.5
+  max-damage: 2.5
+
+energy:
+  max: 100
+  normal-attack-recovery: 10
