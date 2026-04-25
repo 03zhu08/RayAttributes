@@ -3,6 +3,7 @@ package cn.earthsky.rayattributes;
 import cn.earthsky.rayattributes.attribute.AttributeManager;
 import cn.earthsky.rayattributes.combat.CombatListener;
 import cn.earthsky.rayattributes.command.AdminCommand;
+import cn.earthsky.rayattributes.compat.RayAttributesExpansion;
 import cn.earthsky.rayattributes.config.ConfigManager;
 import cn.earthsky.rayattributes.energy.EnergyManager;
 import cn.earthsky.rayattributes.enhance.EnhanceManager;
@@ -12,6 +13,7 @@ import cn.earthsky.rayattributes.listener.PlayerListener;
 import cn.earthsky.rayattributes.set.SetManager;
 import cn.earthsky.rayattributes.storage.DatabaseManager;
 import cn.earthsky.rayattributes.storage.PlayerDataDAO;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RayAttributes extends JavaPlugin {
@@ -48,6 +50,12 @@ public final class RayAttributes extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new CombatListener(this), this);
 
         getCommand("raya").setExecutor(new AdminCommand(this));
+
+        // 注册 PlaceholderAPI 拓展 (如果可用)
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new RayAttributesExpansion(this).register();
+            getLogger().info("PlaceholderAPI 拓展已注册");
+        }
 
         getLogger().info("RayAttributes 已启用");
     }
