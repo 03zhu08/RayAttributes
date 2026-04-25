@@ -14,6 +14,7 @@ public class ConfigManager {
     private final RayAttributes plugin;
     private YamlConfiguration equipmentConfig;
     private YamlConfiguration setsConfig;
+    private YamlConfiguration loreColorsConfig;
 
     private int maxEnhanceLevel;
     private final Map<Integer, Integer> subStatUnlock = new HashMap<>();
@@ -48,12 +49,16 @@ public class ConfigManager {
         plugin.reloadConfig();
         saveResourceIfAbsent("equipment.yml");
         saveResourceIfAbsent("sets.yml");
+        saveResourceIfAbsent("lore-colors.yml");
 
         File eqFile = new File(plugin.getDataFolder(), "equipment.yml");
         equipmentConfig = YamlConfiguration.loadConfiguration(eqFile);
 
         File setsFile = new File(plugin.getDataFolder(), "sets.yml");
         setsConfig = YamlConfiguration.loadConfiguration(setsFile);
+
+        File lcFile = new File(plugin.getDataFolder(), "lore-colors.yml");
+        loreColorsConfig = YamlConfiguration.loadConfiguration(lcFile);
 
         loadEquipmentConfig();
         loadBaseConfig();
@@ -126,6 +131,68 @@ public class ConfigManager {
     }
 
     public YamlConfiguration getSetsConfig() { return setsConfig; }
+    public YamlConfiguration getLoreColorsConfig() { return loreColorsConfig; }
+
+    // ── Lore 配色便捷方法 ──────────────────────────────────────────
+
+    private String schemePath(String key) {
+        String preset = loreColorsConfig.getString("preset", "fantasy");
+        return "schemes." + preset + "." + key;
+    }
+
+    public String getLoreStr(String key) {
+        return loreColorsConfig.getString(schemePath(key), "");
+    }
+
+    public String getSeparator() {
+        String ch = getLoreStr("separator.char");
+        int len = loreColorsConfig.getInt(schemePath("separator.length"), 18);
+        String color = getLoreStr("separator.color");
+        StringBuilder sb = new StringBuilder(color);
+        for (int i = 0; i < len; i++) sb.append(ch);
+        return sb.toString();
+    }
+
+    public String getTierColor(String tierName) {
+        return getLoreStr("tier." + tierName);
+    }
+
+    public String getStatLabelColor() {
+        return getLoreStr("stat.label");
+    }
+
+    public String getStatValueColor(AttributeType type) {
+        String val = getLoreStr("stat_value." + type.name());
+        return val.isEmpty() ? getLoreStr("stat.value_default") : val;
+    }
+
+    public String getHeaderColor(String key) {
+        return getLoreStr("header." + key);
+    }
+
+    public String getSetLabelColor() {
+        return getLoreStr("set_line.label");
+    }
+
+    public String getSetValueColor() {
+        return getLoreStr("set_line.value");
+    }
+
+    public String getFooterColor() {
+        return getLoreStr("footer.color");
+    }
+
+    public String getWeaponTypeLabel() {
+        return getLoreStr("footer.weapon_type");
+    }
+
+    public String getLevelPrefix() {
+        return getLoreStr("level.prefix");
+    }
+
+    public String getLevelColor() {
+        return getLoreStr("level.color");
+    }
     public int getMaxEnhanceLevel() { return maxEnhanceLevel; }
     public Map<Integer, Integer> getSubStatUnlock() { return subStatUnlock; }
     public List<Integer> getSubStatEnhanceLevels() { return subStatEnhanceLevels; }

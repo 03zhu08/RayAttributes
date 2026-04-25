@@ -1,0 +1,70 @@
+# =================================================================
+# RayAttributes Lore 配色方案
+# 预设: FantasyWeapon 风格
+# 所有值均为 Minecraft § 颜色代码
+# =================================================================
+
+# 当前使用的配色方案名称
+preset: "fantasy"
+
+schemes:
+  fantasy:
+    # ── 分隔线 ────────────────────────────
+    separator:
+      char: "━"
+      length: 18
+      color: "§8"
+
+    # ── 品质颜色 ──────────────────────────
+    tier:
+      BLUE: "§9§l"
+      PURPLE: "§5§l"
+      GOLD: "§6§l"
+
+    # ── 槽位名称颜色 ──────────────────────
+    slot:
+      WEAPON: "§c"
+      HEAD: "§6"
+      CHEST: "§6"
+      LEGS: "§6"
+      FEET: "§6"
+
+    # ── 分段标题 (【主词条】/【副词条】) ──
+    header:
+      primary: "§6"     # 主词条标题
+      secondary: "§7"   # 副词条标题
+
+    # ── 属性标签/值 颜色 ──────────────────
+    stat:
+      label: "§7"       # 属性名（如 "攻击力:"）
+      value_default: "§f"
+
+    # ── 各属性值颜色 ──────────────────────
+    stat_value:
+      ATTACK: "§c"
+      ATTACK_PERCENT: "§c"
+      HEALTH: "§4"
+      HEALTH_PERCENT: "§4"
+      DEFENSE: "§9"
+      DEFENSE_PERCENT: "§9"
+      CRIT_RATE: "§b"
+      CRIT_DAMAGE: "§6"
+      SKILL_DAMAGE: "§d"
+      ENERGY_REGEN: "§a"
+      COOLDOWN_REDUCTION: "§e"
+      DAMAGE_REDUCTION: "§3"
+
+    # ── 套装行 ────────────────────────────
+    set_line:
+      label: "§a"       # "套装: " 的颜色
+      value: "§2"       # 套装名的颜色
+
+    # ── 底部类型行 ────────────────────────
+    footer:
+      color: "§8"
+      weapon_type: "属性武器"
+
+    # ── 等级显示 ──────────────────────────
+    level:
+      prefix: "§7"
+      color: "§e"

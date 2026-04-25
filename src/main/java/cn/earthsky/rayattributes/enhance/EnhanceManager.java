@@ -47,7 +47,7 @@ public class EnhanceManager {
             enhanceRandomSubStat(data, cfg);
         }
 
-        LoreWriter.apply(item, data);
+        new LoreWriter(plugin.getConfigManager()).apply(item, data);
         plugin.getAttributeManager().recalculate(player);
 
         player.sendMessage(ChatColor.GREEN + "强化成功！装备等级: " + ChatColor.YELLOW + "Lv." + newLevel);
