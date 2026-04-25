@@ -65,7 +65,8 @@ raya.getEquipmentManager().autoGenerate(itemStack);
 | 命令 | 说明 |
 |---|---|
 | `/raya give <玩家> <槽位> <品质> [套装ID]` | 给予一件 Lv.1 基础装备 |
-| `/raya info [玩家]` | 查看玩家属性面板 |
+| `/raya info [玩家]` | 查看玩家简要属性 |
+| `/raya stats [玩家]` | 查看玩家详细属性面板（分类展示+属性明细） |
 | `/raya enhance` | 强化手持装备 |
 | `/raya setlevel <玩家> <等级>` | 设置玩家等级 |
 | `/raya reload` | 重载配置文件 |
@@ -76,6 +77,46 @@ raya.getEquipmentManager().autoGenerate(itemStack);
 - **lore-colors.yml** — Lore 显示配色方案
 - **sets.yml** — 套装加成定义
 - **config.yml** — 基础属性、暴击设置、能量系统
+
+## PlaceholderAPI 支持
+
+安装 PlaceholderAPI 后自动注册，提供以下占位符变量：
+
+| 占位符 | 说明 |
+|---|---|
+| `%raya_level%` | 玩家等级 |
+| `%raya_energy%` | 当前能量值 |
+| `%raya_max_energy%` | 最大能量值 |
+| `%raya_<属性名>%` | 属性最终值 |
+| `%raya_<属性名>_flat%` | 属性基础值 |
+| `%raya_<属性名>_percent%` | 属性百分比值 |
+| `%raya_<属性名>_final%` | 属性最终值（显式别名） |
+
+属性名使用 AttributeType 枚举名转小写，例如：
+`attack`、`health`、`defense`、`crit_rate`、`crit_damage`、`skill_damage`、
+`energy_regen`、`cooldown_reduction`、`damage_reduction`、`attack_percent`、
+`health_percent`、`defense_percent`。
+
+示例：
+```
+%raya_attack%        → 攻击力最终值  (如 1200)
+%raya_crit_rate%     → 暴击率最终值  (如 35.0)
+%raya_health_flat%   → 生命基础值    (如 1700)
+```
+
+## 属性模拟工具
+
+`tools/attribute-sim/` 目录下提供了一个 TypeScript 全栈属性计算模拟器，涵盖插件所有核心机制：
+
+- **后端**（Express + TypeScript）：装备生成、强化、玩家属性计算、伤害公式，逻辑与插件完全对齐
+- **前端**（React + Vite + TypeScript）：图形化界面，支持装备创建、强化模拟、玩家属性计算、战斗模拟、自动生成演示、套装加成预览、能量系统展示
+
+启动方式：
+```bash
+cd tools/attribute-sim
+npm run dev
+# 服务端 http://localhost:3001  |  前端 http://localhost:5173
+```
 
 ## 核心设计原则
 
