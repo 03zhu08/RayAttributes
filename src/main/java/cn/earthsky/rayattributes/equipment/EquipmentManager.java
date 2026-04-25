@@ -79,7 +79,7 @@ public class EquipmentManager {
         if (!containsAutoTag(item)) return item;
 
         EquipmentSlot slot = detectSlot(item);
-        EquipmentTier tier = EquipmentTier.BLUE;
+        EquipmentTier tier = parseTierFromTag(item);
 
         ConfigManager cfg = plugin.getConfigManager();
         List<AttributeType> mainPool = cfg.getSlotMainStats(slot);
@@ -121,6 +121,31 @@ public class EquipmentManager {
             }
         }
         return false;
+    }
+
+    private EquipmentTier parseTierFromTag(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return EquipmentTier.BLUE;
+        ItemMeta meta = item.getItemMeta();
+        if (!meta.hasLore()) return EquipmentTier.BLUE;
+        for (String line : meta.getLore()) {
+            String clean = ChatColor.stripColor(line);
+            int idx = clean.indexOf("<RayAttributes-Automatic");
+            if (idx == -1) continue;
+            String rest = clean.substring(idx + "<RayAttributes-Automatic".length());
+            // Support <RayAttributes-Automatic:TIER> or <RayAttributes-Automatic>
+            if (rest.startsWith(":")) {
+                int end = rest.indexOf(">");
+                if (end > 1) {
+                    String tierStr = rest.substring(1, end).toUpperCase().trim();
+                    try {
+                        return EquipmentTier.valueOf(tierStr);
+                    } catch (IllegalArgumentException ignored) {
+                    }
+                }
+            }
+            break;
+        }
+        return EquipmentTier.BLUE;
     }
 
     private EquipmentSlot detectSlot(ItemStack item) {
