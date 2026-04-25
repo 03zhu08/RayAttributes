@@ -45,7 +45,7 @@ public class AdminCommand implements CommandExecutor {
 
     private boolean handleGive(CommandSender sender, String[] args) {
         if (args.length < 4) {
-            sender.sendMessage(ChatColor.RED + "用法: /raya give <玩家> <槽位> <品质> [等级] [套装ID]");
+            sender.sendMessage(ChatColor.RED + "用法: /raya give <玩家> <槽位> <品质> [套装ID]");
             return true;
         }
 
@@ -65,10 +65,10 @@ public class AdminCommand implements CommandExecutor {
             return true;
         }
 
-        int level = args.length > 4 ? Integer.parseInt(args[4]) : 1;
-        String setId = args.length > 5 ? args[5].toUpperCase() : null;
+        // 创建时固定 1 级，强化需手动
+        String setId = args.length > 4 ? args[4].toUpperCase() : null;
 
-        ItemStack item = plugin.getEquipmentManager().createEquipment(slot, tier, level, setId);
+        ItemStack item = plugin.getEquipmentManager().createEquipment(slot, tier, 1, setId);
         if (item != null) {
             target.getInventory().addItem(item);
             sender.sendMessage(ChatColor.GREEN + "已给予 " + target.getName() + " 一件 " +
@@ -150,7 +150,7 @@ public class AdminCommand implements CommandExecutor {
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(ChatColor.GOLD + "=== RayAttributes ===");
-        sender.sendMessage(ChatColor.YELLOW + "/raya give <玩家> <槽位> <品质> [等级] [套装ID]");
+        sender.sendMessage(ChatColor.YELLOW + "/raya give <玩家> <槽位> <品质> [套装ID]");
         sender.sendMessage(ChatColor.YELLOW + "/raya info [玩家]");
         sender.sendMessage(ChatColor.YELLOW + "/raya enhance" + ChatColor.GRAY + " - 强化手持装备");
         sender.sendMessage(ChatColor.YELLOW + "/raya setlevel <玩家> <等级>");

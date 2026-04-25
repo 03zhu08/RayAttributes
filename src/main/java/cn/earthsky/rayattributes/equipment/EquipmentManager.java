@@ -3,9 +3,11 @@ package cn.earthsky.rayattributes.equipment;
 import cn.earthsky.rayattributes.RayAttributes;
 import cn.earthsky.rayattributes.attribute.AttributeType;
 import cn.earthsky.rayattributes.config.ConfigManager;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.*;
 
@@ -37,45 +39,23 @@ public class EquipmentManager {
         }
     }
 
+    /**
+     * 创建一个基础装备，仅含主词条，强化等级固定为 1。
+     * 副词条不会自动生成 —— 只能通过 /raya enhance 手动添加。
+     */
     public ItemStack createEquipment(EquipmentSlot slot, EquipmentTier tier, int level, String setId) {
         ConfigManager cfg = plugin.getConfigManager();
         List<AttributeType> mainPool = cfg.getSlotMainStats(slot);
-        List<AttributeType> subPool = cfg.getSlotSubStats(slot);
-
         if (mainPool.isEmpty()) return null;
 
         Random rand = new Random();
         AttributeType mainType = mainPool.get(rand.nextInt(mainPool.size()));
 
+        // 首次创建固定为 1 级，强化需手动
         double maxBase = cfg.getMainStatMax().getOrDefault(mainType, 0.0);
-        double mainValue = (maxBase / cfg.getMaxEnhanceLevel()) * level * tier.getMultiplier();
+        double mainValue = (maxBase / cfg.getMaxEnhanceLevel()) * 1 * tier.getMultiplier();
 
-        EquipmentData data = new EquipmentData(slot, tier, level, mainType, mainValue);
-
-        int subCount = 2;
-        for (Map.Entry<Integer, Integer> entry : cfg.getSubStatUnlock().entrySet()) {
-            if (level >= entry.getValue()) {
-                subCount = Math.max(subCount, entry.getKey());
-            }
-        }
-
-        List<AttributeType> availableSubs = new ArrayList<>(subPool);
-        availableSubs.remove(mainType);
-        Collections.shuffle(availableSubs, rand);
-
-        for (int i = 0; i < Math.min(subCount, availableSubs.size()); i++) {
-            AttributeType subType = availableSubs.get(i);
-            double subMax = cfg.getSubStatMax().getOrDefault(subType, 0.0) * tier.getMultiplier();
-            double subValue = subMax * cfg.getSubStatInitialRatio();
-
-            int enhanceCount = 0;
-            for (int enhLv : cfg.getSubStatEnhanceLevels()) {
-                if (level >= enhLv) enhanceCount++;
-            }
-            subValue += subMax * cfg.getSubStatEnhanceRatio() * Math.min(enhanceCount, 1);
-
-            data.addSubStat(subType, subValue);
-        }
+        EquipmentData data = new EquipmentData(slot, tier, 1, mainType, mainValue);
 
         if (setId != null && slot != EquipmentSlot.WEAPON) {
             data.setSetId(setId);
@@ -83,9 +63,95 @@ public class EquipmentManager {
 
         Material material = getMaterialForSlot(slot);
         ItemStack item = new ItemStack(material);
-        LoreWriter.apply(item, data);
+        new LoreWriter(plugin.getConfigManager()).apply(item, data);
 
         return item;
+    }
+
+    /**
+     * 若物品 Lore 中包含 &lt;RayAttributes-Automatic&gt; 标记，
+     * 则自动生成主词条 + 随机副词条（均为 1 级），并覆写 Lore。
+     * 否则不做任何处理，原物返回。
+     * <p>
+     * 此方法供外部插件（如 FantasyWeapon）调用的公开 API。
+     */
+    public ItemStack autoGenerate(ItemStack item) {
+        if (!containsAutoTag(item)) return item;
+
+        EquipmentSlot slot = detectSlot(item);
+        EquipmentTier tier = EquipmentTier.BLUE;
+
+        ConfigManager cfg = plugin.getConfigManager();
+        List<AttributeType> mainPool = cfg.getSlotMainStats(slot);
+        if (mainPool.isEmpty()) return item;
+
+        Random rand = new Random();
+        AttributeType mainType = mainPool.get(rand.nextInt(mainPool.size()));
+
+        double maxBase = cfg.getMainStatMax().getOrDefault(mainType, 0.0);
+        double mainValue = (maxBase / cfg.getMaxEnhanceLevel()) * 1 * tier.getMultiplier();
+
+        EquipmentData data = new EquipmentData(slot, tier, 1, mainType, mainValue);
+
+        // 自动生成 2 个基础副词条
+        List<AttributeType> subPool = cfg.getSlotSubStats(slot);
+        List<AttributeType> availableSubs = new ArrayList<>(subPool);
+        availableSubs.remove(mainType);
+        Collections.shuffle(availableSubs, rand);
+
+        int subCount = Math.min(2, availableSubs.size());
+        for (int i = 0; i < subCount; i++) {
+            AttributeType subType = availableSubs.get(i);
+            double subMax = cfg.getSubStatMax().getOrDefault(subType, 0.0) * tier.getMultiplier();
+            double subValue = subMax * cfg.getSubStatInitialRatio();
+            data.addSubStat(subType, subValue);
+        }
+
+        new LoreWriter(plugin.getConfigManager()).apply(item, data);
+        return item;
+    }
+
+    private boolean containsAutoTag(ItemStack item) {
+        if (item == null || !item.hasItemMeta()) return false;
+        ItemMeta meta = item.getItemMeta();
+        if (!meta.hasLore()) return false;
+        for (String line : meta.getLore()) {
+            if (ChatColor.stripColor(line).contains("<RayAttributes-Automatic>")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private EquipmentSlot detectSlot(ItemStack item) {
+        switch (item.getType()) {
+            case DIAMOND_HELMET:
+            case IRON_HELMET:
+            case CHAINMAIL_HELMET:
+            case GOLD_HELMET:
+            case LEATHER_HELMET:
+                return EquipmentSlot.HEAD;
+            case DIAMOND_CHESTPLATE:
+            case IRON_CHESTPLATE:
+            case CHAINMAIL_CHESTPLATE:
+            case GOLD_CHESTPLATE:
+            case LEATHER_CHESTPLATE:
+                return EquipmentSlot.CHEST;
+            case DIAMOND_LEGGINGS:
+            case IRON_LEGGINGS:
+            case CHAINMAIL_LEGGINGS:
+            case GOLD_LEGGINGS:
+            case LEATHER_LEGGINGS:
+                return EquipmentSlot.LEGS;
+            case DIAMOND_BOOTS:
+            case IRON_BOOTS:
+            case CHAINMAIL_BOOTS:
+            case GOLD_BOOTS:
+            case LEATHER_BOOTS:
+                return EquipmentSlot.FEET;
+            default:
+                return EquipmentSlot.WEAPON;
+        }
     }
 
     private Material getMaterialForSlot(EquipmentSlot slot) {
